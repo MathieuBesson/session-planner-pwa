@@ -4,10 +4,11 @@ const config = {
   darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
+    './pages/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+  ],
   prefix: "",
   theme: {
     container: {
@@ -75,6 +76,17 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
+  safelist: [
+    'bg-red-500',
+    'bg-blue-500',
+    'bg-orange-500',
+    'bg-green-500',
+    'bg-gray-500',
+    'bg-black',
+    'bg-white',
+    'text-white',
+    'text-black',
+  ],
 } satisfies Config
 
 export default config
