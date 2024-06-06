@@ -1,109 +1,139 @@
 import NextAuth, { Session } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import GoogleProvider from 'next-auth/providers/google'
+import CredentialsProvider from "next-auth/providers/credentials";
 
 
 
-/**
- * Takes a token, and returns a new token with updated
- * `accessToken` and `accessTokenExpires`. If an error occurs,
- * returns the old token and an error property
- */
-async function refreshAccessToken(token: JWT) {
-  try {
-    console.log("refresh token " + token.refreshToken)
-    const url =
-      "https://oauth2.googleapis.com/token?" +
-      new URLSearchParams({
-        "client_id": process.env.GOOGLE_CLIENT_ID??"".toString(),
-        "client_secret": process.env.GOOGLE_CLIENT_SECRET??"".toString(),
-        "grant_type": "refresh_token",
-        "refresh_token": (token.refreshToken as string),
-      })
+// /**
+//  * Takes a token, and returns a new token with updated
+//  * `accessToken` and `accessTokenExpires`. If an error occurs,
+//  * returns the old token and an error property
+//  */
+// async function refreshAccessToken(token: JWT) {
+//   try {
+//     console.log("refresh token " + token.refreshToken)
+//     const url =
+//       "https://oauth2.googleapis.com/token?" +
+//       new URLSearchParams({
+//         "client_id": process.env.GOOGLE_CLIENT_ID??"".toString(),
+//         "client_secret": process.env.GOOGLE_CLIENT_SECRET??"".toString(),
+//         "grant_type": "refresh_token",
+//         "refresh_token": (token.refreshToken as string),
+//       })
 
-      console.log(url)
+//       console.log(url)
 
-    const response = await fetch(url, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      method: "POST",
-    })
+//     const response = await fetch(url, {
+//       headers: {
+//         "Content-Type": "application/x-www-form-urlencoded",
+//       },
+//       method: "POST",
+//     })
 
-    const refreshedTokens = await response.json()
+//     const refreshedTokens = await response.json()
 
-    if (!response.ok) {
-      throw refreshedTokens
-    }
+//     if (!response.ok) {
+//       throw refreshedTokens
+//     }
 
-    return {
-      ...token,
-      googleIdToken: refreshedTokens.access_token,
-      accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
-      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
-    }
-  } catch (error) {
-    console.log(error)
+//     return {
+//       ...token,
+//       googleIdToken: refreshedTokens.access_token,
+//       accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
+//       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+//     }
+//   } catch (error) {
+//     console.log(error)
 
-    return {
-      ...token,
-      error: "RefreshAccessTokenError",
-    }
-  }
-}
+//     return {
+//       ...token,
+//       error: "RefreshAccessTokenError",
+//     }
+//   }
+// }
 
 export default NextAuth({
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? ''
+    CredentialsProvider({
+      // The name to display on the sign in form (e.g. "Sign in with...")
+      name: "Credentials",
+      // `credentials` is used to generate a form on the sign in page.
+      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
+      // e.g. domain, username, password, 2FA token, etc.
+      // You can pass any HTML attribute to the <input> tag through the object.
+      credentials: {
+        action: { label: '', type: 'hidden' },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Mot de passe', type: 'password' },
+        firstName: { label: 'Prénom', type: 'string' },
+        lastName: { label: 'Nom', type: 'string' },
+      },
+      authorize: async (credentials, req) => {
+
+        const { action } = credentials;
+        const { email, password } = credentials;
+        delete credentials.action;
+
+        let dataToPost = {};
+        let ressourcePath = "";
+        if (action === "register") {
+          dataToPost = credentials;
+          ressourcePath = action
+        } else {
+          dataToPost = { email, password };
+          ressourcePath = action
+        }
+        console.log(req)
+        // const action = req.body().get('action');
+        // console.log(action)
+        const response = await fetch(`http://localhost:8080/users/${ressourcePath}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dataToPost),
+        });
+
+        if (response.ok) {
+          const user = await response.json();
+          console.log("AUTHOIZEEEE")
+          console.log(user)
+          return user;
+        } else {
+          return null;
+        }
+      },
     })
   ],
   callbacks: {
-    async jwt({ token, account }) {
-      console.log('JWT Callback', { token, account })
-      // console.log('JWT Callback')
-      if (account) {
-        token.googleIdToken = account.id_token
-        token.refreshToken = account.refresh_token
+    async session({ session, token }: { session: Session, token: any }) {
+      session.user = token.user;
+      session.accessToken = token.user.token.token;
 
-
-        // Faire une requête API pour créer un utilisateur si nécessaire ou récupérer l'utilisateur
-        const response = await fetch('http://localhost:8080/auth/authenticate', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${account.id_token}`,
-            'Content-Type': 'application/json'
-          }
-        })
-
-        const userData = await response.json()
-
-        // Ajouter les données de l'utilisateur dans le token
-        token.user = userData.user
-      }
-
-      if (account?.expires_at && Date.now() < account?.expires_at) {
-        // return token
-      }
-
-      return token
-
-
-      // Access token has expired, try to update it
-      return refreshAccessToken(token)
+      return session;
     },
-    async session({ session, token }: { session: any, token: JWT }) {
-      // console.log('Session Callback', { session, token }) 
-      console.log('Session Callback')
-      session.googleIdToken = token.googleIdToken
+    async jwt({ token, user, account }) {
+      console.log('JWWWT')
+      console.log(token, user)
+      if (account && user) {
+        return { ...token, user };
+      }
 
-      // Ajouter les données de l'utilisateur dans la session
-      session.auth = token
+      return token;
+    },
+    async signOut({ token, user }) {
+      // Effectuer la déconnexion
+      await NextAuth.signout();
 
-      return session
+      // Rediriger l'utilisateur vers la page de connexion
+      window.location.href = '/login';
     },
   },
+  pages: {
+    signIn: '/login',
+  },
+
 })
 
 

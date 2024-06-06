@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from "@/components/ui/use-toast";
 import withAuth from "@/components/with-auth";
+import { Roles } from "@/enums/roles";
 import { capitalize, convertSecondsToHoursMinutes } from "@/lib/utils";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -302,5 +303,11 @@ const SessionEditPage: React.FC = () => {
         </div>
     );
 };
+
+
+SessionEditPage.auth = {
+    roleId: [Roles.ADMIN],
+    unauthorized: "/",
+}
 
 export default SessionEditPage;

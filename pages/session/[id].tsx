@@ -17,13 +17,17 @@ import { SessionStatusBadgeInfo } from "@/types/session-status-badge-info";
 import 'moment/locale/fr';
 import { RiDeleteBinLine } from "react-icons/ri";
 import { SessionStatus } from "@/enums/session-status";
+import { Roles } from "@/enums/roles";
+import { useSession } from "next-auth/react";
 
-export default function SessionPage({ }) {
+const SessionPage: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
   const [users, setUsers] = useState([]);
   const [userIdSelectedComboBox, setUserIdSelectedComboBox] = useState(null);
   const [sessionStatusBadgeInfo, setSessionStatusBadgeInfo] = useState<SessionStatusBadgeInfo | null>();
+  const { data: sessionNext, status } = useSession()
+
 
   const { data: session, isLoading: isLoadingSession, isError: isErrorSession, get: getOneSession } = useOneSession(id as string, false);
   const {
@@ -106,10 +110,12 @@ export default function SessionPage({ }) {
               </button>
               <h1 className={"text-3xl font-bold"}>{session.name}</h1>
             </div>
-
-            <button className="ml-5" onClick={() => router.push(`/session/${session.id}/edit`)}>
-              <LuFileEdit size={30} />
-            </button>
+            {
+              sessionNext?.user.roleId === Roles.ADMIN &&
+              <button className="ml-5" onClick={() => router.push(`/session/${session.id}/edit`)}>
+                <LuFileEdit size={30} />
+              </button>
+            }
           </div>
           <div>
             <div className={"flex flex-col sm:flex-row"}>
@@ -117,7 +123,7 @@ export default function SessionPage({ }) {
                 {capitalize(session.sessionType.name)}
               </BadgeWithIcon>
               {sessionStatusBadgeInfo &&
-                <BadgeWithIcon Icon={sessionStatusBadgeInfo.icon} color={sessionStatusBadgeInfo.color} suffix={`${session.users.length}/${session.maxCapacity}`}>
+                <BadgeWithIcon Icon={sessionStatusBadgeInfo.icon} color={sessionStatusBadgeInfo.color} suffix={`${users.length}/${session.maxCapacity}`}>
                   {sessionStatusBadgeInfo.label}
                 </BadgeWithIcon>
               }
@@ -147,12 +153,18 @@ export default function SessionPage({ }) {
             {sessionStatusBadgeInfo && sessionStatusBadgeInfo.id === SessionStatus.OPEN &&
               <Card className={"flex flex-col justify-center items-center w-full px-4 py-6 mb-4 "}>
                 <h2 className={"font-bold text-xl mb-4"}>Liste des inscrits</h2>
-                <SearchCombobox setUserIdSelectedComboBox={setUserIdSelectedComboBox} ></SearchCombobox>
-                <div className={"flex flex-wrap flex-col sm:flex-row justify-center items-center sm:justify-start w-full max-w-md text-gray-500 mb-4 mt-5"}>
+                {
+                  sessionNext?.user.roleId === Roles.ADMIN &&
+                  <SearchCombobox setUserIdSelectedComboBox={setUserIdSelectedComboBox} ></SearchCombobox>
+                }
+                <div className={"flex flex-wrap flex-col sm:flex-row justify-center items-center sm:justify-start w-full max-w-md text-gray-500 mb-4"}>
                   {users.map(user =>
                     <div key={user.id} className={"flex sm:w-1/2 items-center my-2"}>
                       <UserPreview firstName={user.firstName} lastName={user.lastName}></UserPreview>
-                      <RiDeleteBinLine onClick={() => handleRemoveUser(user.id)} color='#EF4444' size={23} className={"ml-3"} />
+                      {
+                        sessionNext?.user.roleId === Roles.ADMIN &&
+                        <RiDeleteBinLine onClick={() => handleRemoveUser(user.id)} color='#EF4444' size={23} className={"ml-3"} />
+                      }
                     </div>
                   )}
                 </div>
@@ -165,3 +177,5 @@ export default function SessionPage({ }) {
     </>
   )
 }
+
+export default SessionPage;

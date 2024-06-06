@@ -164,7 +164,7 @@ export function SearchCombobox({ setUserIdSelectedComboBox }: { setUserIdSelecte
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <div className={"flex"}>
+      <div className={"flex mb-5"}>
         <PopoverTrigger asChild className={"mr-2"}>
           <Button
             variant="outline"

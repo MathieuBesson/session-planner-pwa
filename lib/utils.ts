@@ -30,9 +30,6 @@ export function getStatus(
   const today = moment();
   const date = moment(dateString);
 
-  console.log(date, today, startRegistrationDate)
-  console.log(today < startRegistrationDate)
-
   switch (true) {
     case cancelled === true:
       return {

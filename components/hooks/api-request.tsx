@@ -107,12 +107,13 @@ const useGeneric = (uri: string, onLoad: boolean = true) => {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const { data: session } = useSession();
 
     const request = (currentUri: string) => {
         setIsLoading(true);
         setError(null);
 
-        fetcher('GET', `http://localhost:8080/${currentUri}`, "")
+        fetcher('GET', `http://localhost:8080/${currentUri}`, session.accessToken)
             .then(data => {
                 setData(data);
                 setIsLoading(false);
@@ -162,6 +163,7 @@ export const useRegisterUserToSession = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
+    const { data: session } = useSession();
 
 
     const registerUserToSession = async (sessionId: number, userId: number) => {
@@ -172,7 +174,7 @@ export const useRegisterUserToSession = () => {
             const response = await fetcher(
                 'POST',
                 `http://localhost:8080/sessions/${sessionId}/users/${userId}`,
-                '',
+                session.accessToken,
                 null
             );
 
@@ -197,6 +199,7 @@ export const useUnregisterUserFromSession = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
+    const { data: session } = useSession();
 
     const unregisterUserFromSession = async (sessionId: number, userId: number) => {
         console.log(sessionId, userId)
@@ -207,7 +210,7 @@ export const useUnregisterUserFromSession = () => {
             const response = await fetcher(
                 'DELETE',
                 `http://localhost:8080/sessions/${sessionId}/users/${userId}`,
-                '',
+                session.accessToken,
                 null
             );
 
@@ -231,6 +234,7 @@ export const useSearchUser = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
+    const { data: session } = useSession();
 
     const searchUser = async (username: string) => {
         setIsLoading(true);
@@ -240,7 +244,7 @@ export const useSearchUser = () => {
             const response = await fetcher(
                 'GET',
                 `http://localhost:8080/users?username=${username}`,
-                '',
+                session.accessToken,
                 null
             );
 
@@ -260,34 +264,11 @@ export const useSearchUser = () => {
     };
 };
 
-export const updateSessionMieux = async (sessionId: number, body: any): Promise<{ error: any, data: any }> => {
-    try {
-      const response = await fetcher(
-        'PUT',
-        `http://localhost:8080/sessions/${sessionId}`,
-        '',
-        body
-      );
-  
-      if (response.error) {
-        console.log(response.error);
-        return { error: response.error, data: null };
-      } else {
-        console.log(response);
-        return { error: null, data: response };
-      }
-    } catch (error) {
-      console.log(error.message);
-      return { error: error.message, data: null };
-    }
-  };
-
-
 export const useUpdateSession = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
-
+    const { data: session } = useSession();
 
     const updateSession = async (sessionId: number, body: any) => {
         setIsLoading(true);
@@ -297,7 +278,7 @@ export const useUpdateSession = () => {
             const response = await fetcher(
                 'PUT',
                 `http://localhost:8080/sessions/${sessionId}`,
-                '',
+                session.accessToken,
                 body
             );
 
@@ -333,7 +314,7 @@ export const useCreateSession = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
-
+    const { data: session } = useSession();
 
     const createSession = async (body: any) => {
         setIsLoading(true);
@@ -343,7 +324,7 @@ export const useCreateSession = () => {
             const response = await fetcher(
                 'POST',
                 `http://localhost:8080/sessions/`,
-                '',
+                session.accessToken,
                 body
             );
 

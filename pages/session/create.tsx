@@ -1,5 +1,6 @@
 import SessionForm, { SessionData } from "@/components/block/session-form";
 import { useCreateSession } from "@/components/hooks/api-request";
+import { Roles } from "@/enums/roles";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { MdKeyboardArrowLeft } from "react-icons/md";
@@ -34,5 +35,10 @@ const SessionCreatePage: React.FC = () => {
         </div>
     );
 };
+
+SessionCreatePage.auth = {
+    roleId: [Roles.ADMIN],
+    unauthorized: "/",
+}
 
 export default SessionCreatePage;

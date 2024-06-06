@@ -2,6 +2,7 @@ import { useRegisterUserToSession, useUnregisterUserFromSession } from "../hooks
 import { Switch } from "../ui/switch";
 import { useEffect, useState } from 'react';
 import { toast } from "../ui/use-toast";
+import { useSession } from "next-auth/react";
 
 type SwitchRegisterInput = {
   sessionId: number,
@@ -11,6 +12,7 @@ type SwitchRegisterInput = {
 
 export default function SwitchRegister({ sessionId, users, setUsers }: SwitchRegisterInput) {
 
+  const { data: session } = useSession();
   const {
     isLoading: isLoadingCreate,
     error: errorCreate,
@@ -33,15 +35,15 @@ export default function SwitchRegister({ sessionId, users, setUsers }: SwitchReg
 
   const handleSwitchClick = async () => {
     if (isOwnRegistered() === true) {
-      await unregisterUserFromSession(sessionId, 1)
-      removeUserById(1)
+      await unregisterUserFromSession(sessionId, session?.user.id)
+      removeUserById(session?.user.id)
     } else {
-      await registerUserToSession(sessionId, 1)
+      await registerUserToSession(sessionId, session?.user.id)
     }
   };
 
   function isOwnRegistered(): boolean {
-    return users.find(user => user.id === 1) !== undefined;
+    return users.find(user => user.id === session?.user.id) !== undefined;
   }
 
   function removeUserById(userId: number) {
@@ -73,7 +75,8 @@ export default function SwitchRegister({ sessionId, users, setUsers }: SwitchReg
     <div className={"flex"}>
       <Switch
         checked={isOwnRegistered()}
-        onClick={handleSwitchClick}
+        onCheckedChange={handleSwitchClick}
+        // onCheckedChange={() => console.log('ok')}
         className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-400 mr-2"
       />
       <span className={"font-bold"}>INSCRIT</span>
