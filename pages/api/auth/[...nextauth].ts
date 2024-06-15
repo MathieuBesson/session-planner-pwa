@@ -68,6 +68,7 @@ export default NextAuth({
         password: { label: 'Mot de passe', type: 'password' },
         firstName: { label: 'Prénom', type: 'string' },
         lastName: { label: 'Nom', type: 'string' },
+        tokenClub: { label: 'Clé du club', type: 'string' },
       },
       authorize: async (credentials, req) => {
 

@@ -86,6 +86,9 @@ const config = {
     'bg-white',
     'text-white',
     'text-black',
+    'text-white',
+    'placeholder-gray-500',
+    'placeholder-white'
   ],
 } satisfies Config
 

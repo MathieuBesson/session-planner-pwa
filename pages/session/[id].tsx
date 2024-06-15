@@ -163,7 +163,7 @@ const SessionPage: React.FC = () => {
                       <UserPreview firstName={user.firstName} lastName={user.lastName}></UserPreview>
                       {
                         sessionNext?.user.roleId === Roles.ADMIN &&
-                        <RiDeleteBinLine onClick={() => handleRemoveUser(user.id)} color='#EF4444' size={23} className={"ml-3"} />
+                        <RiDeleteBinLine onClick={() => handleRemoveUser(user.id)} color='#EF4444' size={23} className={"ml-3 cursor-pointer"} />
                       }
                     </div>
                   )}
