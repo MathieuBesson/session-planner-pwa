@@ -1,7 +1,7 @@
 import DatePicker from "@/components/block/date-picker";
 import DayTimeInput from "@/components/block/day-time-input";
 import InputIcon from "@/components/block/input-icon";
-import { useHalls, useOneSession, useSessionTypes, useUpdateSession } from "@/components/hooks/api-request";
+import { useDeleteSession, useHalls, useOneSession, useSessionTypes, useUpdateSession } from "@/components/hooks/api-request";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from '@/components/ui/textarea';
@@ -36,6 +36,7 @@ const SessionForm: React.FC<SessionFormProps> = ({ session, onSubmit }) => {
     const { data: halls } = useHalls();
     const { data: sessionTypes } = useSessionTypes();
     const { data: updatedSession, updateSession, error: errorUpdateSession } = useUpdateSession();
+    const { data: deletedSession, deleteSession, error: errorDeleteSession } = useDeleteSession();
     const { toast } = useToast()
 
     const [sessionData, setSessionData] = useState<SessionData>({
@@ -63,7 +64,6 @@ const SessionForm: React.FC<SessionFormProps> = ({ session, onSubmit }) => {
                 date: session.date.split("T")[0],
                 delayedBeforeRegistration: session.delayBeforeRegistration,
             });
-            console.log(session)
         }
     }, [session]);
 
@@ -93,7 +93,7 @@ const SessionForm: React.FC<SessionFormProps> = ({ session, onSubmit }) => {
 
     const handleDateChange = (date: Date) => {
         const dateAtNoon = new Date(date);
-        dateAtNoon.setHours(12, 0, 0, 0); // Définir l'heure à midi (12h00)
+        dateAtNoon.setHours(12, 0, 0, 0);
         setSessionData({
             ...sessionData,
             date: dateAtNoon.toISOString().split("T")[0],
@@ -116,7 +116,11 @@ const SessionForm: React.FC<SessionFormProps> = ({ session, onSubmit }) => {
 
     const handleCancelSession = () => {
         updateSession(session?.id, { ...session, cancelled: !session?.cancelled })
-        router.push(`/session/${session.id}`)
+    }
+
+    const handleDeleteSession = (e) => {
+        e.preventDefault();
+        deleteSession(session?.id)
     }
 
     useEffect(() => {
@@ -136,8 +140,32 @@ const SessionForm: React.FC<SessionFormProps> = ({ session, onSubmit }) => {
                 title: "Super !",
                 description: "Session mise à jour avec succès",
             })
+            router.push(`/session/${session.id}`)
         }
     }, [updatedSession])
+
+
+    useEffect(() => {
+        if (errorDeleteSession) {
+            toast({
+                typeCustom: "danger",
+                title: "Erreur de suppression",
+                description: errorDeleteSession,
+            })
+        }
+    }, [errorDeleteSession])
+
+    useEffect(() => {
+        console.log(deletedSession)
+        if (deletedSession !== null && !deletedSession?.error) {
+            toast({
+                typeCustom: "success",
+                title: "Super !",
+                description: "Session supprimé avec succès",
+            })
+            router.push(`/`)
+        }
+    }, [deletedSession])
 
     return (
         <form onSubmit={(e) => onSubmit(e, sessionData)} className={"text-gray-500"}>
@@ -249,14 +277,19 @@ const SessionForm: React.FC<SessionFormProps> = ({ session, onSubmit }) => {
                     {session ? "Enregistrer" : "Créer la session"}
                 </Button>
                 {session &&
-                    <Button onClick={() => handleCancelSession()} className={`bg-${session.cancelled === true ? 'blue' : "red"}-500 my-3`}>
+                    <>
+                        <Button onClick={() => handleCancelSession()} className={`bg-${session.cancelled === true ? 'blue' : "red"}-500 my-3`}>
 
-                        {session.cancelled === true
-                            ? "Réactiver"
-                            : "Annuler"
-                        } la session
+                            {session.cancelled === true
+                                ? "Réactiver"
+                                : "Annuler"
+                            } la session
 
-                    </Button>
+                        </Button>
+                        <Button onClick={(e) => handleDeleteSession(e)} className={"bg-white text-red-500 border-red-500 border-2 my-3 hover:text-white hover:bg-red-500"}>
+                            Supprimer la session
+                        </Button>
+                    </>
                 }
             </div>
         </form>

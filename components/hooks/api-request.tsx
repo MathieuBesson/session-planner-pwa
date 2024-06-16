@@ -155,6 +155,10 @@ export const useSessionTypes = () => {
     return useGeneric('session-types');
 };
 
+export const useUsers = () => {
+    return useGeneric('users');
+};
+
 export const useOneSession = (id: string, onLoad: boolean = true) => {
     return useGeneric(`sessions/${id}`, onLoad);
 };
@@ -341,5 +345,78 @@ export const useCreateSession = () => {
         isLoading,
         error,
         createSession,
+    };
+};
+
+export const useDeleteSession = () => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [data, setData] = useState(null);
+    const { data: session } = useSession();
+
+    const deleteSession = async (sessionId: number) => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const response = await fetcher(
+                'DELETE',
+                `http://localhost:8080/sessions/${sessionId}`,
+                session.accessToken,
+                null
+            );
+
+            console.log(response, data)
+            setData(response);
+            setIsLoading(false);
+        } catch (error) {
+            setError(error);
+            setIsLoading(false);
+        }
+    };
+
+    return {
+        data,
+        isLoading,
+        error,
+        deleteSession,
+    };
+};
+
+export const useUpdateUser = () => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [data, setData] = useState(null);
+    const { data: session } = useSession();
+
+    const updateUser = async (userId: number, body: any) => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const response = await fetcher(
+                'PUT',
+                `http://localhost:8080/users/${userId}`,
+                session.accessToken,
+                body
+            );
+
+            setData(response);
+            setIsLoading(false);
+        } catch (error) {
+            setError(error.message);
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        console.log(error)
+    }, [error])
+
+    return {
+        data,
+        isLoading,
+        error,
+        updateUser,
     };
 };

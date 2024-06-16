@@ -47,7 +47,7 @@ const SessionList: React.FC = () => {
                         </button>
                     </>
                 }
-                <button onClick={() => signOut({ callbackUrl: '/login', redirect:true })}>
+                <button onClick={() => signOut({ callbackUrl: '/login', redirect: true })}>
                     <TbLogout size={30} />
                 </button>
             </div>
@@ -71,6 +71,8 @@ const SessionList: React.FC = () => {
                     cancelled={session.cancelled}
                 />
             )}
+
+            {(sessions === null || sessions?.length === 0) && <p className="text-center">Pas de sessions disponibles...</p>}
         </>
     );
 }
