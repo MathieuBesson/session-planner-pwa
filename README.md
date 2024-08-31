@@ -5,49 +5,49 @@
 
 ## Description
 
-Le frontend de **Session Planner** est une application web développée avec **Next.js**. Il sert d'interface utilisateur pour interagir avec l'API backend **Adonis JS** afin de faciliter l'inscription aux sessions de jeu pour l'Union Sportive Vernoise Badminton.
+The frontend of **Session Planner** is a web application built with **Next.js**. It serves as the user interface for interacting with the **Adonis JS** backend API to facilitate session sign-ups for Union Sportive Vernoise Badminton.
 
-## Prérequis
+## Prerequisites
 
 ![Node.js](https://img.shields.io/badge/node.js-v18-339933?logo=nodedotjs&logoColor=white&labelColor=339933&color=white)
 ![npm](https://img.shields.io/badge/npm-v10-CB3837?logo=npm&logoColor=white&labelColor=CB3837&color=white)
 
 ## Installation
 
-1. **Clonez le dépôt** : 
+1. **Clone the repository**: 
    ```bash
    git clone https://github.com/MathieuBesson/session-planner-pwa
    ```
-2. **Accédez au répertoire du projet** :
+2. **Navigate to the project directory**:
    ```bash
    cd session-planner-pwa
    ```
-3. **Installez les dépendances** :
+3. **Install dependencies**:
    ```bash
    npm install
    ```
-4. **Configurez les variables d'environnement** :
-   - Créez un fichier `.env.local` à partir de `.env.example` et configurez les variables d'environnement.
+4. **Configure environment variables**:
+   - Create a `.env.local` file from `.env.example` and configure the environment variables.
 
-## Démarrage
+## Starting the Development Server
 
-Pour démarrer le serveur de développement, exécutez la commande suivante :
+To start the development server, run the following command:
 
 ```bash
 npm run dev
 ```
 
-- L'application sera accessible à l'adresse : [http://localhost:3000](http://localhost:3000).
+- The application will be accessible at: [http://localhost:3000](http://localhost:3000).
 
-## API Backend
+## Backend API
 
-L'API backend de **Session Planner**, développée avec **Adonis JS**, est disponible ici : [session-planner-api](https://github.com/MathieuBesson/session-planner-api).
+The **Session Planner** backend API, developed with **Adonis JS**, is available here: [session-planner-api](https://github.com/MathieuBesson/session-planner-api).
 
 ## TODO
 
-- Revoir le typage de tous les props de composants
-- Découper les composants volumineux 
+- Review typing of all component props.
+- Break down large components into smaller ones.
 
-## Licence
+## License
 
-Ce projet est sous licence MIT. Consultez le fichier `LICENSE` pour plus de détails.
+This project is licensed under the GPL License. See the [LICENSE](./LICENSE) file for more details.
