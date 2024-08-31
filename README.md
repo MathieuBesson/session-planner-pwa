@@ -45,8 +45,8 @@ L'API backend de **Session Planner**, développée avec **Adonis JS**, est dispo
 
 ## TODO
 
-- ✔️ Revoir le typage de tous les props de composants
-- ✔️ Découper les composants volumineux 
+- Revoir le typage de tous les props de composants
+- Découper les composants volumineux 
 
 ## Licence
 
