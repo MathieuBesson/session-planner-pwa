@@ -1,8 +1,5 @@
 # Session Planner Frontend
 
-![Next.js](https://img.shields.io/badge/next.js-v13-000000?logo=nextdotjs&logoColor=white&labelColor=000000&color=white) 
-![Node.js](https://img.shields.io/badge/node.js-v18-339933?logo=nodedotjs&logoColor=white&labelColor=339933&color=white)
-
 ## Description
 
 The frontend of **Session Planner** is a web application built with **Next.js**. It serves as the user interface for interacting with the **Adonis JS** backend API to facilitate session sign-ups for Union Sportive Vernoise Badminton.
