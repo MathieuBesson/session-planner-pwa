@@ -29,6 +29,11 @@ L'application sera accessible à l'adresse `http://localhost:3000`.
 
 L'API backend de Session Planner est  est développée à l'aide d'Adonis JS et disponible sur ce dépot : [session-planner-api](https://github.com/MathieuBesson/session-planner-api).
 
+## TODO 
+
+- Revoir le typage de tous les props de composants
+- Découper les composants volumineux 
+
 ## Licence
 
 Ce projet est sous licence MIT. Consultez le fichier `LICENSE` pour plus de détails.
