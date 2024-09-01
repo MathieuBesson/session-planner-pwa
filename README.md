@@ -26,7 +26,7 @@ The frontend of **Session Planner** is a web application built with **Next.js**.
 4. **Configure environment variables**:
    - Create a `.env.local` file from `.env.example` and configure the environment variables.
 
-## Starting the Development Server
+## Starting the development server
 
 To start the development server, run the following command:
 
